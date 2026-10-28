@@ -1,12 +1,12 @@
 TAREAS A REALIZAR
 
--Modificar calls por jumps
+<s>-Modificar calls por jumps</s>
 
 -Separar por archivos
 
 -Interrupcion propia
 
--Etiquetas de titulo, esc para salir, y algunas otras cositas aesthetics
+-Etiquetas de titulo, esc para salir, y algunas otras cositas aesthetics del interfaz
 
 -Implementar ascii para dibujar (Modificar mouse por ascci seleccionado?)
 
@@ -15,5 +15,7 @@ TAREAS A REALIZAR
 -Implementar borrar
 
 -Implementar guardar/cargar
+
+<s>-archivo .bat para compilar</s>
 
 :)

@@ -4,7 +4,7 @@ TAREAS A REALIZAR
 
 -Separar por archivos
 
--Interrupcion propia
+<s>-Interrupcion propia</s>
 
 -Etiquetas de titulo, esc para salir, y algunas otras cositas aesthetics del interfaz
 
@@ -12,7 +12,7 @@ TAREAS A REALIZAR
 
 -Implementar tamaño
 
--Implementar borrar
+<s>-Implementar borrar</s>
 
 -Implementar guardar/cargar
 

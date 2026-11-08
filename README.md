@@ -1,10 +1,10 @@
 TAREAS A REALIZAR
 
-<s>-Modificar calls por jumps</s>
+<s>-Modificar calls por jumps</s> (Iván)
 
--Separar por archivos
+-Separar por archivos (Agus)
 
-<s>-Interrupcion propia</s>
+<s>-Interrupcion propia</s> (Iván)
 
 -Etiquetas de titulo, esc para salir, y algunas otras cositas aesthetics del interfaz
 
@@ -12,10 +12,10 @@ TAREAS A REALIZAR
 
 -Implementar tamaño
 
-<s>-Implementar borrar</s>
+<s>-Implementar borrar</s> (Iván)
 
 -Implementar guardar/cargar
 
-<s>-archivo .bat para compilar</s>
+<s>-archivo .bat para compilar</s> (Iván)
 
 :)

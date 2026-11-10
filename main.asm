@@ -2,9 +2,6 @@
 .model small
 .stack 100h
 
-; =========================================================================
-; DECLARACIÓN DE SUBRUTINAS EXTERNAS (Definidas en lib.asm)
-; =========================================================================
 extrn init_mouse:proc
 extrn leer_mouse:proc
 extrn limpiar_pantalla:proc
@@ -30,11 +27,10 @@ extrn limpiarLienzoISR:proc
 
 .code
 main proc
-    ; 1. Inicializar el Segmento de Datos (DS)
     mov ax, @data
     mov ds, ax
 
-    ; 2. Configurar e instalar la interrupción propia (INT 60h)
+    ; Configuracion interrupción propia (INT 60h)
     mov ah, 35h
     mov al, vector_num
     int 21h
@@ -50,20 +46,18 @@ main proc
     int 21h
     pop ds   
 
-    ; 3. Activar Modo Gráfico VGA (640x480, 16 colores) y limpiar lienzo
+    ; Activar Modo Gráfico VGA (640x480, 16 colores)
     call limpiar_pantalla
 
-    ; 4. Dibujar la interfaz (barra divisora y paleta de colores)
+    ; Dibujar la interfaz
     call dibujar_interfaz
 
-    ; 5. Inicializar y mostrar el cursor del ratón
+    ; Inicializar y mostrar el cursor del ratón
     call init_mouse
 
-; =========================================================================
-; BUCLE PRINCIPAL (Escucha de Teclado y Mouse)
-; =========================================================================
+; BUCLE PRINCIPAL 
 proceso:
-    ; A. Leer estado del mouse
+    ; Leer estado del mouse
     call leer_mouse     ; Retorna: BX = Botones, CX = X, DX = Y
     mov mouse_x, cx
     mov mouse_y, dx
@@ -73,10 +67,10 @@ proceso:
     cmp bx, 1
     je salto_procesar_click
 
-    ; B. Verificar lectura de teclado (INT 16h / AH=01h sin bloquear)
+    ; Verificar lectura de teclado 
     mov ah, 01h
     int 16h
-    jz continuar_loop   ; Si no hay tecla presionada, continuar en el bucle
+    jz continuar_loop 
 
     ; Consumir la tecla presionada (INT 16h / AH=00h)
     mov ah, 00h
@@ -137,9 +131,7 @@ check_esc:
 continuar_loop:
     jmp proceso
 
-; =========================================================================
-; TRAMPOLINES DE SALTO (Para evitar "Relative jump out of range")
-; =========================================================================
+; Saltos intermedios
 salto_procesar_click:
     jmp procesar_click
 
@@ -152,20 +144,18 @@ salto_fin_menu:
 salto_proceso:
     jmp proceso
 
-; =========================================================================
-; MANEJO DE CLIC DEL MOUSE (Lienzo vs. Menú Lateral)
-; =========================================================================
+; MANEJO DE CLIC DEL MOUSE (Lienzo | Menú Lateral)
 procesar_click:
-    cmp mouse_x, 120
-    ja dibujar_lienzo         ; Si X > 120, pintar en la zona de lienzo
-    jmp verificar_menu        ; Si X <= 120, procesar botón de la interfaz
+    cmp mouse_x, 130
+    ja dibujar_lienzo         ; Si X > 130, pintar en la zona de lienzo
+    jmp verificar_menu        ; Si X <= 130, procesar botón de la interfaz
 
 dibujar_lienzo:
-    ; 1. Ocultar cursor temporalmente para no corromper la pantalla
+    ; Ocultar cursor temporalmente para no corromper la pantalla
     mov ax, 0002h
     int 33h
 
-    ; 2. Convertir píxeles a grilla de texto 80x25 (X / 8, Y / 16)
+    ; Convertir píxeles a grilla de texto 80x25 (X / 8, Y / 16)
     mov ax, mouse_x
     mov cl, 3
     shr ax, cl                ; DL = Columna (X / 8)
@@ -176,21 +166,19 @@ dibujar_lienzo:
     shr ax, cl                ; DH = Fila (Y / 16)
     mov dh, al
 
-    ; 3. Cargar parámetros y llamar a la rutina de dibujo de trazo
+    ; Cargar parámetros y llamar a la rutina de dibujo de trazo
     mov al, char_actual
     mov bl, color_actual
     mov ah, tamanio_pincel
     call pintar_trazo
 
-    ; 4. Mostrar nuevamente el cursor del mouse
+    ; Mostrar nuevamente el cursor del mouse
     mov ax, 0001h
     int 33h
     jmp salto_proceso
 
-
-; =========================================================================
 ; VERIFICACIÓN DE CLIC EN LA PALETA DE COLORES (X: 0 a 120)
-; =========================================================================
+
 verificar_menu:
     ; FILA 1: Y entre 20 y 45 (Rojo / Verde)
     cmp mouse_y, 20
@@ -359,10 +347,6 @@ esperar_soltar:
     jne esperar_soltar
     jmp salto_proceso
 
-
-; =========================================================================
-; SALIDA DEL PROGRAMA Y RESTAURACIÓN
-; =========================================================================
 salir_paint:
     ; Restaurar la dirección original de la INT 60h
     mov al, vector_num
@@ -378,7 +362,6 @@ salir_paint:
     mov ax, 0003h
     int 10h
 
-    ; Retornar a DOS limpiando la memoria
     mov ax, 4C00h
     int 21h
 main endp

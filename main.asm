@@ -6,6 +6,7 @@ extrn init_mouse:proc
 extrn leer_mouse:proc
 extrn limpiar_pantalla:proc
 extrn dibujar_interfaz:proc
+extrn dibujar_intro:proc
 extrn pintar_trazo:proc
 extrn limpiarLienzoISR:proc
 
@@ -48,6 +49,18 @@ main proc
 
     ; Activar Modo Gráfico VGA (640x480, 16 colores)
     call limpiar_pantalla
+
+    ; --- Pantalla de Intro ---
+    call dibujar_intro
+
+    esperar_enter:
+    mov ah, 00h
+    int 16h
+    cmp al, 0Dh         ; ENTER
+    jne esperar_enter   ; Si no toca enter, espera
+
+    call limpiar_pantalla
+
 
     ; Dibujar la interfaz
     call dibujar_interfaz

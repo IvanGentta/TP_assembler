@@ -12,6 +12,8 @@ TAREAS A REALIZAR
 
 -Implementar tamaño
 
+- Implementar Intro
+
 <s>-Implementar borrar</s>
 
 -Implementar guardar/cargar

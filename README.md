@@ -12,7 +12,7 @@ TAREAS A REALIZAR
 
 -Implementar tamaño
 
-- Implementar Intro
+-Implementar Intro
 
 <s>-Implementar borrar</s>
 

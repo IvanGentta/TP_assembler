@@ -2,18 +2,31 @@
 .model small
 .stack 100h
 
-.data
-    ; --- Textos para la interfaz ---
-    msg_borrador    db "BORRADOR", 24h
-    msg_borrarTodo  db "BORRAR TODO", 24h
-    msg_colores     db "-COLORES-", 24H
-    msg_titulo      db "ASCII PAINT", 24H
-    msg_guardar     db "GUARDAR", 24H
-    msg_cargar      db "CARGAR", 24H
-    msg_esc_salir   db "ESC PARA SALIR", 24H
-    msg_herramientas  db "-HERRAMIENTAS-", 24H
+extrn tamanio_pincel:byte
 
-    ; --- Textos para la pantalla de inicio (Intro) ---
+.data
+    ;interfaz
+    msg_borrador       db "BORRADOR", 24h
+    msg_borrarTodo     db "BORRAR TODO", 24h
+    msg_colores        db "-COLORES-", 24h
+    msg_guardar        db "GUARDAR", 24h
+    msg_cargar         db "CARGAR", 24h
+    msg_esc_salir      db "ESC PARA SALIR", 24h
+    msg_herramientas   db "-HERRAMIENTAS-", 24h
+    msg_pinceles       db "-PINCEL-", 24h
+
+    ;pinceles
+    msg_1_asterisco    db "[*]", 24h
+    msg_2_numeral      db "[#]", 24h
+    msg_3_bloque       db "[", 219, "]", 24h
+    msg_4_punto        db "[.]", 24h
+    msg_5_guion        db "[-]", 24h
+    msg_6_wave         db "[~]", 24h
+    msg_menos          db "-", 24h
+    msg_mas            db "+", 24h
+
+    ;intro
+    msg_titulo      db "ASCII PAINT", 24H
     msg_integrantes db "INTEGRANTES:", 24h
     msg_integ1      db "- Gentta Ivan", 24h
     msg_integ2      db "- Gimenez Agustin", 24h
@@ -22,17 +35,12 @@
 
 .code
 
-; --- Rutinas ---
+;rutinas
 public dibujar_intro
 public dibujar_interfaz
 public dibujar_rectangulo_color
 
-
-; Dibuja la pantalla de bienvenida con marco, titulo, muestra de colores
-; y simbolos ASCII del proyecto, integrantes y aviso de ENTER.
-
 dibujar_intro proc
-    ; Apilamos
     push ax
     push bx
     push cx
@@ -40,7 +48,7 @@ dibujar_intro proc
     push si
     push di
 
-    ; ---   Marcos blancos exteriores   ---
+    ;Marcos blancos exteriores
     ; Borde superior (fila 1) e inferior (fila 28)
     mov dh, 1
     mov dl, 2
@@ -76,7 +84,7 @@ borde_horiz_inf:
     cmp dl, 78
     jb borde_horiz_inf
 
-    ; ---   Título "ASCII PAINT" y subtitulo  ---
+    ; Titulo y subtitulo
     mov ah, 02h
     mov bh, 0
     mov dh, 4           ; Fila 4
@@ -188,7 +196,7 @@ borde_horiz_inf:
     mov cx, 3
     int 10h
 
-    ; --- Nombre de los integrantes    ---
+    ;integrantes
     mov ah, 02h
     mov bh, 0
     mov dh, 15
@@ -222,7 +230,7 @@ borde_horiz_inf:
     mov dx, offset msg_integ3
     int 21h
 
-    ; ---   Mensaje Inferior    ---
+    ;Mensaje Inferior
     mov ah, 02h
     mov bh, 0
     mov dh, 24
@@ -232,7 +240,6 @@ borde_horiz_inf:
     mov dx, offset msg_enter    ; "Pulse Ennter para continuar"
     int 21h
 
-    ;DESAPILAMOS
     pop di
     pop si
     pop dx
@@ -245,7 +252,6 @@ dibujar_intro endp
 
 dibujar_interfaz proc
 
-    ;APILAMOS
     push ax
     push bx
     push cx
@@ -253,47 +259,30 @@ dibujar_interfaz proc
     push si
     push di
 
-    ; Dibujar título "ASCII PAINT"
+    ; --------------------------------
+    ; LINEA DIVISORIA VERTICAL
+    ; --------------------------------
+
+    mov cx, 130
+    mov dx, 0
+
+linea_divisora:
+    mov ah, 0Ch
+    mov al, 0Fh
+    mov bh, 0
+    int 10h
+
+    inc dx
+    cmp dx, 480
+    jne linea_divisora
+
+    ; --------------------------------
+    ; TITULO COLORES
+    ; --------------------------------
+
     mov ah, 02h
     mov bh, 0
     mov dh, 1
-    mov dl, 30
-    int 10h
-
-    mov ah, 09h
-    mov dx, offset msg_titulo
-    int 21h
-
-    ; 1. Dibujar línea divisora vertical blanca en X = 130 (de Y=0 a Y=480)
-    mov cx, 130         ; X = 120 inicial
-    mov dx, 0           ; Y = 0 inicial
-
-linea_divisora:
-    mov ah, 0Ch         ; Servicio INT 10h: Escribir píxel en pantalla
-    mov al, 0Fh         ; Color blanco
-    mov bh, 0           ; Página 0
-    int 10h
-    inc dx              ; Avanzamos a la siguiente fila (Y)
-    cmp dx, 480         ; Es el fin de la ventana?
-    jne linea_divisora  ; Si no terminó, seguimos pintando la línea
-
-
-    ;Línea divisoria horizontal debajo de la paleta de colores
-    mov cx, 0          ; Posición en X (después del borde izquierdo)
-    mov dx, 180         ; Posición en Y (debajo de la paleta de colores)
-linea_divisoria_horizontal:
-    mov ah, 0Ch
-    mov al, 0Fh         ; Color blanco
-    mov bh, 0
-    int 10h
-    inc cx              ; Avanzar en X
-    cmp cx, 130         ; Hasta llegar a la línea divisoria vertical (X=130)
-    jne linea_divisoria_horizontal
-
-    ;Agregamos texto "COLORES" arriba de la paleta
-    mov ah, 02h
-    mov bh, 0
-    mov dh, 1 ;colocamos el texto arriba
     mov dl, 3
     int 10h
 
@@ -301,155 +290,281 @@ linea_divisoria_horizontal:
     mov dx, offset msg_colores
     int 21h
 
-    ;Agregamos título "HERRAMIENTAS" debajo de la paleta
+    ; FILA 1: ROJO Y VERDE
+
+    mov cx, 15
+    mov dx, 40
+    mov si, 35
+    mov di, 25
+    mov al, 04h
+    call dibujar_rectangulo_color
+
+    mov cx, 65
+    mov dx, 40
+    mov si, 35
+    mov di, 25
+    mov al, 02h
+    call dibujar_rectangulo_color
+
+    ; FILA 2: AZUL Y AMARILLO
+
+    mov cx, 15
+    mov dx, 80
+    mov si, 35
+    mov di, 25
+    mov al, 01h
+    call dibujar_rectangulo_color
+
+    mov cx, 65
+    mov dx, 80
+    mov si, 35
+    mov di, 25
+    mov al, 0Eh
+    call dibujar_rectangulo_color
+
+    ; FILA 3: BLANCO Y CIAN
+
+    mov cx, 15
+    mov dx, 120
+    mov si, 35
+    mov di, 25
+    mov al, 0Fh
+    call dibujar_rectangulo_color
+
+    mov cx, 65
+    mov dx, 120
+    mov si, 35
+    mov di, 25
+    mov al, 03h
+    call dibujar_rectangulo_color
+
+    ; --------------------------------
+    ; TITULO HERRAMIENTAS
+    ; --------------------------------
+
     mov ah, 02h
     mov bh, 0
-    mov dh, 12         ; Fila 13 (debajo de la línea divisoria horizontal)
-    mov dl, 2          ; Columna 2 (lado izquierdo)
+    mov dh, 10
+    mov dl, 1
     int 10h
 
     mov ah, 09h
     mov dx, offset msg_herramientas
     int 21h
 
-; 2. Paleta de colores (Cuadros rectangulares de colores)
-    
-    ;       --- Fila 1 ---
-    ; ---   Botón Rojo (Color 04h)
-    mov cx, 15          ; Ubicación x
-    mov dx, 50          ; Ubicación y
-    mov si, 35          ; Ancho (col)
-    mov di, 25          ; Alto (fil)
-    mov al, 04h         ; Color Rojo
-    call dibujar_rectangulo_color
+    ; --------------------------------
+    ; BORRADOR
+    ; --------------------------------
 
-    ; ---   Botón Verde (Color 02h)
-    mov cx, 65          ; Ubicación x
-    mov dx, 50          ; Ubicación y
-    mov si, 35          ; Ancho (col)
-    mov di, 25          ; Alto (fil)
-    mov al, 02h         ; Color Verde
-    call dibujar_rectangulo_color
-
-    ;       --- Fila 2 ---
-    ; ---   Botón Azul (Color 01h)
-    mov cx, 15          ; Ubicación x
-    mov dx, 90          ; Ubicación y
-    mov si, 35          ; Ancho (col)
-    mov di, 25          ; Alto (fil)
-    mov al, 01h         ; Color Azul
-    call dibujar_rectangulo_color
-
-    ; ---   Botón Amarillo (Color 0Eh)
-    mov cx, 65          ; Ubicación x
-    mov dx, 90          ; Ubicación y
-    mov si, 35          ; Ancho (col)
-    mov di, 25          ; Alto (fil)
-    mov al, 0Eh         ; Color Amarillo
-    call dibujar_rectangulo_color
-
-    ;       --- Fila 3 ---
-    ; ---   Botón Blanco (Color 0Fh)
-    mov cx, 15          ; Ubicación x
-    mov dx, 130         ; Ubicación y
-    mov si, 35          ; Ancho (col)
-    mov di, 25          ; Alto (fil)
-    mov al, 0Fh         ; Color Blanco
-    call dibujar_rectangulo_color
-
-    ; ---   Botón Cian (Color 03h)
-    mov cx, 65          ; Ubicación x
-    mov dx, 130        ; Ubicación y
-    mov si, 35          ; Ancho (col)
-    mov di, 25          ; Alto (fil)
-    mov al, 03h         ; Color Cian
-    call dibujar_rectangulo_color
-
-     ; HERRAMIENTAS
-        
-    ; Borrador
-    ; Posicionar cursor y escribir borrador
     mov ah, 02h
     mov bh, 0
-    mov dh, 14
-    mov dl, 3
+    mov dh, 12
+    mov dl, 1
     int 10h
 
-    mov ah, 9
+    mov ah, 09h
     mov dx, offset msg_borrador
     int 21h
 
-    ; Borrar todo
-    ; Posicionar cursor y escribir borrar todo
+    ; --------------------------------
+    ; BORRAR TODO
+    ; --------------------------------
+
     mov ah, 02h
     mov bh, 0
-    mov dh, 16
-    mov dl, 2
+    mov dh, 14
+    mov dl, 1
     int 10h
 
-    mov ah, 9
+    mov ah, 09h
     mov dx, offset msg_borrarTodo
     int 21h
 
-    ;2da línea divisoria horizontal debajo de "Borrar todo"
-    mov cx, 0          ; Posición en X (después del borde izquierdo)
-    mov dx, 280        ; Posición en Y (debajo del botón "Borrar todo")
-segunda_linea_divisoria_horizontal:
-    mov ah, 0Ch
-    mov al, 0Fh        ; Color blanco
-    mov bh, 0
-    int 10h
-    inc cx             ; Avanzar en X
-    cmp cx, 130        ; Hasta llegar a la línea divisoria vertical (X=130)
-    jne segunda_linea_divisoria_horizontal
+    ; --------------------------------
+    ; TITULO PINCELES
+    ; --------------------------------
 
-    ;Opcion GUARDAR
     mov ah, 02h
     mov bh, 0
-    mov dh, 24         ; Fila 24 (debajo de la línea divisoria)
-    mov dl, 3          ; Columna 3
+    mov dh, 17
+    mov dl, 1
+    int 10h
+
+    mov ah, 09h
+    mov dx, offset msg_pinceles
+    int 21h
+
+     ; --------------------------------
+    ; CONTROLES DE TAMANIO
+    ; --------------------------------
+
+    ; Boton +
+    mov ah, 02h
+    mov bh, 0
+    mov dh, 17
+    mov dl, 10
+    int 10h
+
+    mov ah, 09h
+    mov dx, offset msg_mas
+    int 21h
+
+    ; Boton -
+    mov ah, 02h
+    mov bh, 0
+    mov dh, 17
+    mov dl, 14
+    int 10h
+
+    mov ah, 09h
+    mov dx, offset msg_menos
+    int 21h
+
+    ; --------------------------------
+    ; LISTA DE PINCELES
+    ; --------------------------------
+
+    ; Fila 1: 1 *   2 #   3 bloque
+
+    mov ah, 02h
+    mov bh, 0
+    mov dh, 19
+    mov dl, 2
+    int 10h
+
+    mov ah, 09h
+    mov dx, offset msg_1_asterisco
+    int 21h
+
+    mov ah, 02h
+    mov bh, 0
+    mov dh, 19
+    mov dl, 7
+    int 10h
+
+    mov ah, 09h
+    mov dx, offset msg_2_numeral
+    int 21h
+
+    mov ah, 02h
+    mov bh, 0
+    mov dh, 19
+    mov dl, 12
+    int 10h
+
+    mov ah, 09h
+    mov dx, offset msg_3_bloque
+    int 21h
+
+    ; Fila 2: 4 .  5 - 6 ~
+
+    mov ah, 02h
+    mov bh, 0
+    mov dh, 21
+    mov dl, 2
+    int 10h
+
+    mov ah, 09h
+    mov dx, offset msg_4_punto
+    int 21h
+
+    mov ah, 02h
+    mov bh, 0
+    mov dh, 21
+    mov dl, 7
+    int 10h
+
+    mov ah, 09h
+    mov dx, offset msg_5_guion
+    int 21h
+
+    mov ah, 02h
+    mov bh, 0
+    mov dh, 21
+    mov dl, 12
+    int 10h
+
+    mov ah, 09h
+    mov dx, offset msg_6_wave
+    int 21h
+
+    ; --------------------------------
+    ; LINEA DIVISORIA HORIZONTAL
+    ; --------------------------------
+
+    mov cx, 0
+    mov dx, 360
+
+segunda_linea_divisoria_horizontal:
+    mov ah, 0Ch
+    mov al, 0Fh
+    mov bh, 0
+    int 10h
+
+    inc cx
+    cmp cx, 130
+    jne segunda_linea_divisoria_horizontal
+
+    ; --------------------------------
+    ; GUARDAR
+    ; --------------------------------
+
+    mov ah, 02h
+    mov bh, 0
+    mov dh, 24
+    mov dl, 1
     int 10h
 
     mov ah, 09h
     mov dx, offset msg_guardar
     int 21h
 
-    ;opcion "CARGAR"
+    ; --------------------------------
+    ; CARGAR
+    ; --------------------------------
 
     mov ah, 02h
     mov bh, 0
-    mov dh, 26         ; Fila 26 (debajo del botón GUARDAR)
-    mov dl, 3          ; Columna 3
+    mov dh, 26
+    mov dl, 1
     int 10h
 
     mov ah, 09h
     mov dx, offset msg_cargar
     int 21h
 
-    ;mostramos texto "ESC PARA SALIR"
+    ; --------------------------------
+    ; SALIR
+    ; --------------------------------
+
     mov ah, 02h
     mov bh, 0
     mov dh, 28
-    mov dl, 2
+    mov dl, 1
     int 10h
 
     mov ah, 09h
     mov dx, offset msg_esc_salir
     int 21h
 
-    ;DESAPILAMOS
     pop di
     pop si
     pop dx
     pop cx
     pop bx
     pop ax
+
     ret
+
 dibujar_interfaz endp
 
 
+; ====================================
+; DIBUJAR RECTANGULO DE COLOR
+; ====================================
+
 dibujar_rectangulo_color proc
-    ;APILAMOS
+
     push ax
     push bx
     push cx
@@ -458,29 +573,31 @@ dibujar_rectangulo_color proc
     push di
     push bp
 
-    mov bl, al          ; Guardamos el color en BL
-    mov bp, cx          ; Guardamos la coordenada X inicial en BP
+    mov bl, al
+    mov bp, cx
 
 filas_loop:
-    push di             ; Guardamos el contador de filas (alto)
-    mov cx, bp          ; Reseteamos X al inicio del ancho para la nueva fila
-    mov di, si          ; Cargar contador de columnas (ancho)
+    push di
+
+    mov cx, bp
+    mov di, si
 
 columnas_loop:
-    mov ah, 0Ch         ; Servicio INT 10h: Pintar píxel
-    mov al, bl          ; Paso el Color
+    mov ah, 0Ch
+    mov al, bl
     mov bh, 0
     int 10h
-    inc cx              ; Siguiente píxel horizontal (x)
-    dec di              ; Baja el seguimiento del ancho
-    jnz columnas_loop   ; Mientras no sea 0, seguir pintando fila
 
-    pop di              ; Recuperar contador de filas
-    inc dx              ; Avanzar a la siguiente fila vertical
-    dec di              ; Decrementar contador de filas
-    jnz filas_loop      ; Mientras no sea 0, seguir con la siguiente fila
+    inc cx
+    dec di
+    jnz columnas_loop
 
-    ;DESAPILAMOS
+    pop di
+
+    inc dx
+    dec di
+    jnz filas_loop
+
     pop bp
     pop di
     pop si
@@ -488,7 +605,9 @@ columnas_loop:
     pop cx
     pop bx
     pop ax
+
     ret
+
 dibujar_rectangulo_color endp
 
 end

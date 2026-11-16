@@ -64,12 +64,8 @@ leer_mouse endp
 ;           AL = Carácter ASCII, BL = Color, AH = Tamaño (1, 2 o 3)
 
 ; Entradas:
-; DL = Columna de pantalla
-; DH = Fila de pantalla
-; AL = Caracter ASCII
-; BL = Color
-; AH = Tamaño (1, 2 o 3)
-
+; DL = Columna de pantalla DH = Fila de pantalla
+; AL = Caracter ASCII BL = Color AH = Tamaño (1, 2 o 3)
 pintar_trazo proc
     push ax
     push bx
@@ -100,7 +96,6 @@ pintar_trazo proc
         jmp fin_trazo
 
     continuar:
-
     mov col_base, dl
     sub col_base, 16
 
@@ -111,14 +106,12 @@ pintar_trazo proc
     mov filas_restantes, al
 
 bucle_filas_trazo:
-
     ; Verificar que no salgamos de las 30 filas
     cmp fila_actual, 30
     jb continuar_fila
     jmp fin_trazo
 
 continuar_fila:
-
     mov al, tamanio_tmp
     mov columnas_restantes, al
 
@@ -126,13 +119,11 @@ continuar_fila:
     mov col_actual, al
 
 bucle_columnas_trazo:
-
     ; Verificamos que no salgamos de las 64 columnas
     cmp col_actual, 63
     jae saltar_casillero
 
     ; CALCULAR POSICION EN LA MATRIZ
-
     xor ax, ax
     mov al, fila_actual
     mov cl, 7
@@ -146,7 +137,6 @@ bucle_columnas_trazo:
     mov si, ax
 
     ; GUARDAR EN LA MATRIZ
-
     mov al, char_tmp
     mov [lienzo+si], al
 
@@ -154,7 +144,6 @@ bucle_columnas_trazo:
     mov [lienzo+si+1], al
 
     ; DIBUJAR EN PANTALLA
-
     mov dl, col_actual
     add dl, 17
 
@@ -172,7 +161,6 @@ bucle_columnas_trazo:
     int 10h
 
 saltar_casillero:
-
     inc col_actual
     dec columnas_restantes
     jnz bucle_columnas_trazo
@@ -186,7 +174,6 @@ saltar_casillero:
     jmp fin_trazo
 
 fin_trazo:
-
     pop di
     pop si
     pop dx
@@ -196,8 +183,6 @@ fin_trazo:
 
     ret
 pintar_trazo endp
-
-
 
 ;ISR INTERRUPCIÓN PROPIA (INT 60h)
 limpiarLienzoISR proc

@@ -1,7 +1,6 @@
 # ASCII PAINT
 
-<img width="648" height="511" alt="image" src="https://github.com/user-attachments/assets/23280fd4-f2a6-44e4-9345-d0e70a28e74e" />
-
+<img width="639" height="480" alt="image" src="https://github.com/user-attachments/assets/d524218a-b06b-4e9d-becf-58c2451cca47" />
 
 **Docentes**
 - Iriso Pedro

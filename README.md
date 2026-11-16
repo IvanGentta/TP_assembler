@@ -1,5 +1,8 @@
 # ASCII PAINT
 
+<img width="648" height="511" alt="image" src="https://github.com/user-attachments/assets/23280fd4-f2a6-44e4-9345-d0e70a28e74e" />
+
+
 **Docentes**
 - Iriso Pedro
 - Bruschetti Fabio

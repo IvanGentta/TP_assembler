@@ -235,11 +235,7 @@ dibujar_lienzo:
 ; VERIFICACIÓN DE CLIC EN LA PALETA DE COLORES (X: 0 a 120)
 
 verificar_menu:
-
-; --------------------------------
 ; FILA 1: ROJO / VERDE
-; --------------------------------
-
     cmp mouse_y, 40
     jae menu_y40_ok
     jmp fin_menu
@@ -277,11 +273,7 @@ seleccionar_verde:
     mov color_actual, 02h
     jmp fin_menu
 
-
-; --------------------------------
 ; FILA 2: AZUL / AMARILLO
-; --------------------------------
-
 comprobar_fila2:
     cmp mouse_y, 80
     jae menu_y80_ok
@@ -320,11 +312,7 @@ seleccionar_amarillo:
     mov color_actual, 0Eh
     jmp fin_menu
 
-
-; --------------------------------
 ; FILA 3: BLANCO / CIAN
-; --------------------------------
-
 comprobar_fila3:
     cmp mouse_y, 120
     jae menu_y120_ok
@@ -364,11 +352,7 @@ seleccionar_cian:
     jmp fin_menu
 
 comprobar_pinceles:
-    ; --------------------------------
-    ; CONTROLES DE TAMANO
-    ; Y = 272 a 287
-    ; --------------------------------
-
+    ; CONTROLES DE TAMANO Y = 272 a 287
     cmp mouse_y, 272
     jb no_es_fila_tamanio
 
@@ -417,10 +401,7 @@ tamanio_maximo:
 no_es_fila_tamanio:
     jmp revisar_pinceles_fila1
 
-; --------------------------------
 ; PINCELES
-; --------------------------------
-
 revisar_pinceles_fila1:
     cmp mouse_y, 304
     jb segunda_fila_pinceles
@@ -495,10 +476,7 @@ seleccionar_onda:
     mov char_actual, '~'
     jmp fin_menu
 
-; --------------------------------
-; BOTÓN BORRADOR
-; --------------------------------
-
+; BORRADOR
 comprobar_borrador:
     cmp mouse_y, 192
     jae borrador_y_ok
@@ -523,11 +501,7 @@ ejecutar_borrador:
     mov char_actual, ' '
     jmp fin_menu
 
-
-; --------------------------------
-; BOTÓN BORRAR TODO
-; --------------------------------
-
+; BORRAR TODO
 comprobar_borrar_todo:
     cmp mouse_y, 224
     jae borrar_y_ok
@@ -552,11 +526,7 @@ ejecutar_borrar_todo:
     int 60h
     jmp fin_menu
 
-
-; --------------------------------
 ; BOTÓN GUARDAR
-; --------------------------------
-
 comprobar_guardar:
     cmp mouse_y, 384
     jb saltar_fin_guardar
@@ -580,11 +550,7 @@ ejecutar_guardado:
     call guardar_lienzo
     jmp fin_menu
 
-
-; --------------------------------
 ; BOTÓN CARGAR
-; --------------------------------
-
 comprobar_cargar:
     cmp mouse_y, 416
     jae cargar_y_ok

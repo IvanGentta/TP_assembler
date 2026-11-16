@@ -2,7 +2,7 @@
 .model small
 .stack 100h
 
-extrn tamanio_pincel:byte
+extrn tamanio_pincel:byte ;importamos la variable
 
 .data
     ;interfaz
@@ -101,7 +101,7 @@ borde_horiz_inf:
     mov dl, 24          ; Columna 24
     int 10h
 
-    ; ---   Muestreo colores + Simbolos ASCII   ---
+    ;Muestreo colores + Simbolos ASCII
     mov cx, 195
     mov dx, 135
     mov si, 30
@@ -144,65 +144,55 @@ borde_horiz_inf:
     mov al, 03h         ; Cian
     call dibujar_rectangulo_color
 
-; Debajo de los colores (Fila 11), mostramos los simbolos ASCII del pincel
+    ; Debajo de los colores, mostramos los simbolos ASCII del pincel
     mov ah, 02h
     mov bh, 0
     mov dh, 11
-    mov dl, 25
+    mov dl, 26
     int 10h
     mov ah, 09h
-    mov al, '*'         ; Asterisco
+    mov al, '*'         ; Pincel 1
     mov bl, 04h         ; Rojo
     mov cx, 3
     int 10h
 
     mov ah, 02h
     mov dh, 11
-    mov dl, 30
+    mov dl, 32
     int 10h
     mov ah, 09h
-    mov al, '#'         ; Hastag
+    mov al, '#'         ; Pincel 2
     mov bl, 02h         ; Verde
     mov cx, 3
     int 10h
 
     mov ah, 02h
     mov dh, 11
-    mov dl, 36
+    mov dl, 38
     int 10h
     mov ah, 09h
-    mov al, 219d        ; Bloque
-    mov bl, 01h         ; Azul
-    mov cx, 3
-    int 10h
-
-    mov ah, 02h
-    mov dh, 11
-    mov dl, 41
-    int 10h
-    mov ah, 09h
-    mov al, 196d        ; Linea
+    mov al, 219d        ; Pincel 3 (Bloque)
     mov bl, 0Eh         ; Amarillo
     mov cx, 3
     int 10h
 
     mov ah, 02h
     mov dh, 11
-    mov dl, 46
+    mov dl, 44
     int 10h
     mov ah, 09h
-    mov al, '.'         ; Punto
-    mov bl, 0Fh         ; Blanco
+    mov al, 196d        ; Pincel 5 (Linea)
+    mov bl, 03h         ; Cian
     mov cx, 3
     int 10h
 
     mov ah, 02h
     mov dh, 11
-    mov dl, 52
+    mov dl, 50
     int 10h
     mov ah, 09h
-    mov al, '~'         ; Onda
-    mov bl, 03h         ; Cian
+    mov al, '.'         ; Pincel 4 (Punto)
+    mov bl, 0Fh         ; Blanco
     mov cx, 3
     int 10h
 
@@ -269,10 +259,7 @@ dibujar_interfaz proc
     push si
     push di
 
-    ; --------------------------------
     ; LINEA DIVISORIA VERTICAL
-    ; --------------------------------
-
     mov cx, 130
     mov dx, 0
 
@@ -286,10 +273,7 @@ linea_divisora:
     cmp dx, 480
     jne linea_divisora
 
-    ; --------------------------------
     ; TITULO COLORES
-    ; --------------------------------
-
     mov ah, 02h
     mov bh, 0
     mov dh, 1
@@ -348,10 +332,7 @@ linea_divisora:
     mov al, 03h
     call dibujar_rectangulo_color
 
-    ; --------------------------------
     ; TITULO HERRAMIENTAS
-    ; --------------------------------
-
     mov ah, 02h
     mov bh, 0
     mov dh, 10
@@ -362,10 +343,7 @@ linea_divisora:
     mov dx, offset msg_herramientas
     int 21h
 
-    ; --------------------------------
     ; BORRADOR
-    ; --------------------------------
-
     mov ah, 02h
     mov bh, 0
     mov dh, 12
@@ -376,10 +354,7 @@ linea_divisora:
     mov dx, offset msg_borrador
     int 21h
 
-    ; --------------------------------
     ; BORRAR TODO
-    ; --------------------------------
-
     mov ah, 02h
     mov bh, 0
     mov dh, 14
@@ -390,10 +365,7 @@ linea_divisora:
     mov dx, offset msg_borrarTodo
     int 21h
 
-    ; --------------------------------
     ; TITULO PINCELES
-    ; --------------------------------
-
     mov ah, 02h
     mov bh, 0
     mov dh, 17
@@ -404,10 +376,7 @@ linea_divisora:
     mov dx, offset msg_pinceles
     int 21h
 
-     ; --------------------------------
     ; CONTROLES DE TAMANIO
-    ; --------------------------------
-
     ; Boton +
     mov ah, 02h
     mov bh, 0
@@ -430,10 +399,7 @@ linea_divisora:
     mov dx, offset msg_menos
     int 21h
 
-    ; --------------------------------
     ; LISTA DE PINCELES
-    ; --------------------------------
-
     ; Fila 1: 1 *   2 #   3 bloque
 
     mov ah, 02h
@@ -467,7 +433,6 @@ linea_divisora:
     int 21h
 
     ; Fila 2: 4 .  5 - 6 ~
-
     mov ah, 02h
     mov bh, 0
     mov dh, 21
@@ -498,10 +463,7 @@ linea_divisora:
     mov dx, offset msg_6_wave
     int 21h
 
-    ; --------------------------------
     ; LINEA DIVISORIA HORIZONTAL
-    ; --------------------------------
-
     mov cx, 0
     mov dx, 360
 
@@ -515,10 +477,7 @@ segunda_linea_divisoria_horizontal:
     cmp cx, 130
     jne segunda_linea_divisoria_horizontal
 
-    ; --------------------------------
     ; GUARDAR
-    ; --------------------------------
-
     mov ah, 02h
     mov bh, 0
     mov dh, 24
@@ -529,10 +488,7 @@ segunda_linea_divisoria_horizontal:
     mov dx, offset msg_guardar
     int 21h
 
-    ; --------------------------------
     ; CARGAR
-    ; --------------------------------
-
     mov ah, 02h
     mov bh, 0
     mov dh, 26
@@ -543,10 +499,7 @@ segunda_linea_divisoria_horizontal:
     mov dx, offset msg_cargar
     int 21h
 
-    ; --------------------------------
     ; SALIR
-    ; --------------------------------
-
     mov ah, 02h
     mov bh, 0
     mov dh, 28
@@ -568,11 +521,7 @@ segunda_linea_divisoria_horizontal:
 
 dibujar_interfaz endp
 
-
-; ====================================
 ; DIBUJAR RECTANGULO DE COLOR
-; ====================================
-
 dibujar_rectangulo_color proc
 
     push ax
@@ -617,7 +566,6 @@ columnas_loop:
     pop ax
 
     ret
-
 dibujar_rectangulo_color endp
 
 end

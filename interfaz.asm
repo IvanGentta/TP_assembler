@@ -148,51 +148,61 @@ borde_horiz_inf:
     mov ah, 02h
     mov bh, 0
     mov dh, 11
-    mov dl, 26
+    mov dl, 25
     int 10h
     mov ah, 09h
-    mov al, '*'         ; Pincel 1
+    mov al, '*'         ; Asterisco
     mov bl, 04h         ; Rojo
     mov cx, 3
     int 10h
 
     mov ah, 02h
     mov dh, 11
-    mov dl, 32
+    mov dl, 30
     int 10h
     mov ah, 09h
-    mov al, '#'         ; Pincel 2
+    mov al, '#'         ; Hastag
     mov bl, 02h         ; Verde
     mov cx, 3
     int 10h
 
     mov ah, 02h
     mov dh, 11
-    mov dl, 38
+    mov dl, 36
     int 10h
     mov ah, 09h
-    mov al, 219d        ; Pincel 3 (Bloque)
+    mov al, 219d        ; Bloque
+    mov bl, 01h         ; Azul
+    mov cx, 3
+    int 10h
+
+    mov ah, 02h
+    mov dh, 11
+    mov dl, 41
+    int 10h
+    mov ah, 09h
+    mov al, 196d        ; Linea
     mov bl, 0Eh         ; Amarillo
     mov cx, 3
     int 10h
 
     mov ah, 02h
     mov dh, 11
-    mov dl, 44
+    mov dl, 46
     int 10h
     mov ah, 09h
-    mov al, 196d        ; Pincel 5 (Linea)
-    mov bl, 03h         ; Cian
+    mov al, '.'         ; Punto
+    mov bl, 0Fh         ; Blanco
     mov cx, 3
     int 10h
 
     mov ah, 02h
     mov dh, 11
-    mov dl, 50
+    mov dl, 52
     int 10h
     mov ah, 09h
-    mov al, '.'         ; Pincel 4 (Punto)
-    mov bl, 0Fh         ; Blanco
+    mov al, '~'         ; Onda
+    mov bl, 03h         ; Cian
     mov cx, 3
     int 10h
 

@@ -25,7 +25,7 @@ extrn lienzo:byte ;importamos el lienzo del .data del main
 
     ;guardado
     nombre_archivo db 'DIBUJO.DAT', 0 ;nombre del archivo a guardar
-    handle_archivo dw 0 ;identificador para 
+    handle_archivo dw 0 ;identificador el manejo de estado
 
     ;carga
     fila_carga       db 0

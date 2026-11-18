@@ -60,9 +60,6 @@ leer_mouse proc
     ret
 leer_mouse endp
 
-; Entradas: DL = Columna Texto (X), DH = Fila Texto (Y), 
-;           AL = Carácter ASCII, BL = Color, AH = Tamaño (1, 2 o 3)
-
 ; Entradas:
 ; DL = Columna de pantalla DH = Fila de pantalla
 ; AL = Caracter ASCII BL = Color AH = Tamaño (1, 2 o 3)
